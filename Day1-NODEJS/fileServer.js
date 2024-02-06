@@ -11,7 +11,7 @@ http.createServer(function(req,res){
         if (r.search != null) {
             if(req.method == "GET"){
                 res.writeHead(200,{'e':'e'});
-                if(q.query.username == 'ahmed' && q.query.password == '123'){
+                if(q.query.username == 'ahmed-Khalil' && q.query.password == '123456'){
                     res.write('login successfully')
                 }else{
                     res.write('failed to login')
