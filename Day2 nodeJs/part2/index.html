@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Cars</title>
+</head>
+<body>
+    <h1>All Cars</h1>
+    <hr>
+
+    <label>
+        Car Model:
+        <input type="text" id="model" name="carmodel">
+    </label>
+
+    <label>
+        License Number:
+        <input type="text" id="number" name="licensenum">
+    </label>
+
+    <input type="submit" value="add" onclick="addCar();">
+
+    <hr>
+    <table id="cars">
+        <tr>
+            <th>ID</th>
+            <th>Model</th>
+            <th>License Number</th>
+        </tr>
+
+    </table>
+
+    <script>
+        async function readAllCars() {
+            let response = await fetch('http://localhost:5000/cars/readall');
+            let responseBody = await response.json();
+            let cars = responseBody.data;
+
+            let table = document.getElementById('cars');
+            let carElement = cars.map(car => 
+            `
+            <tr>
+                <td>${car.id}</td>
+                <td><a href='http://localhost:5000/cars/${car.id}'>${car.model}</a></td>
+                <td>${car['license number']}</td>
+                <td><button onclick="deleteCar('${car.id}')">Delete</button></td>
+            </tr>
+            `)
+            cars.length > 0? table.innerHTML = carElement.join(''): table.innerHTML = "<p>There are no cars to show</p>";
+            
+
+        }
+        readAllCars()
+        
+        //-----------------------------------------
+        async function addCar() {
+            let model = document.getElementById('model').value;
+            let number = document.getElementById('number').value;
+
+            const body = {
+                model:model,
+                "license number":number,
+            }
+
+            await fetch("http://localhost:5000/cars/addcar",{
+                method:"POST",
+                headers:{
+                    "content-type":"application/json"
+                },
+                body:JSON.stringify(body)
+            })
+            readAllCars()
+        }
+
+        async function deleteCar(id) {
+            let res = await fetch(`http://localhost:5000/cars/delete/${id}`);
+            let resBody = await res.json();
+
+            alert(resBody.msg);
+            readAllCars()
+        }
+    </script>
+</body>
+</html>
